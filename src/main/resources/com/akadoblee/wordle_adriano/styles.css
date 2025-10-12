@@ -106,3 +106,60 @@
     -fx-font-family: "System";
     font-family: "System";
 }
+
+.stats-pane {
+    -fx-background-color: #121213;
+    background-color: #121213;
+}
+
+.stats-container {
+    -fx-background-color: #1a1a1b;
+    background-color: #1a1a1b;
+    -fx-padding: 20;
+    padding: 20px;
+    -fx-background-radius: 8;
+    border-radius: 8px;
+}
+
+.stats-title {
+    -fx-font-size: 24px;
+    font-size: 24px;
+    -fx-font-weight: bold;
+    font-weight: bold;
+    -fx-text-fill: white;
+    color: white;
+}
+
+.stats-label {
+    -fx-font-size: 16px;
+    font-size: 16px;
+    -fx-text-fill: #818384;
+    color: #818384;
+}
+
+.stats-value {
+    -fx-font-size: 20px;
+    font-size: 20px;
+    -fx-font-weight: bold;
+    font-weight: bold;
+    -fx-text-fill: white;
+    color: white;
+}
+
+.new-game-button {
+    -fx-background-color: #538d4e;
+    background-color: #538d4e;
+    -fx-text-fill: white;
+    color: white;
+    -fx-font-weight: bold;
+    font-weight: bold;
+    -fx-padding: 10 20;
+    padding: 10px 20px;
+    -fx-background-radius: 4;
+    border-radius: 4px;
+}
+
+.new-game-button:hover {
+    -fx-opacity: 0.9;
+    opacity: 0.9;
+}

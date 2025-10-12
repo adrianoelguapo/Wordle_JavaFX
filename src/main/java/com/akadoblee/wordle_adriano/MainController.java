@@ -1,12 +1,17 @@
 package com.akadoblee.wordle_adriano;
 
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Button;
 import javafx.scene.layout.Pane;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.KeyCode;
+import javafx.stage.Stage;
 import javafx.beans.value.ChangeListener;
+import java.io.IOException;
 import java.util.Random;
 import java.util.List;
 import java.util.Arrays;
@@ -61,13 +66,11 @@ public class MainController {
         root.requestFocus(); // Esto asegura que el panel tenga el foco desde el inicio
 
         // Seleccionar una palabra aleatoria
-        targetWord = WORDS.get(new Random().nextInt(WORDS.size()));
-        System.out.println("Palabra objetivo seleccionada: " + targetWord);
-
-        // Seleccionar una palabra aleatoria
         Random random = new Random();
         targetWord = WORDS.get(random.nextInt(WORDS.size()));
-        System.out.println("Palabra objetivo seleccionada: " + targetWord);  // Debug
+        
+        // Inicializar las estadísticas
+        GameStats.getInstance().resetGameStats(targetWord);
     }
 
     @FXML
@@ -92,7 +95,6 @@ public class MainController {
 
     @FXML
     private void onEnter() {
-        System.out.println("onEnter llamado");  // Debug
         if (currentCol == 5) {
             StringBuilder guess = new StringBuilder();
             for (int i = 0; i < 5; i++) {
@@ -100,32 +102,50 @@ public class MainController {
             }
 
             String guessWord = guess.toString();
-            System.out.println("Palabra intentada: " + guessWord);  // Debug
-            System.out.println("Palabra objetivo: " + targetWord);  // Debug
-            
             checkWord(guessWord);
+
             if (guessWord.equals(targetWord)) {
                 // ¡Victoria!
-                System.out.println("¡Felicidades! ¡Has ganado!");
-                disableInput();
+                GameStats.getInstance().incrementGamesWon();
+                showStatsView();
             } else if (currentRow == 5) {
                 // Juego terminado - sin más intentos
-                System.out.println("¡Juego terminado! La palabra era: " + targetWord);
-                disableInput();
+                GameStats.getInstance().incrementGamesLost();
+                showStatsView();
             } else {
                 currentRow++;
                 currentCol = 0;
             }
-        } else {
-            System.out.println("No hay suficientes letras. currentCol = " + currentCol);  // Debug
+        }
+    }
+
+    private void showStatsView() {
+        try {
+            disableInput();
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("StatsView.fxml"));
+            Parent root = loader.load();
+            Scene scene = new Scene(root);
+            scene.getStylesheets().add(getClass().getResource("styles.css").toExternalForm());
+            
+            Stage stage = (Stage) this.root.getScene().getWindow();
+            stage.setScene(scene);
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
     private void checkWord(String guess) {
+        GameStats gameStats = GameStats.getInstance();
+        gameStats.incrementAttempts();
+
         for (int i = 0; i < 5; i++) {
             TextField field = grid[currentRow][i];
             char guessChar = guess.charAt(i);
             char targetChar = targetWord.charAt(i);
+
+            // Registrar la letra usada
+            gameStats.addUsedLetter(String.valueOf(guessChar));
 
             // Mantener el estilo del borde
             field.setStyle("-fx-border-color: #3a3a3c; -fx-border-width: 2;");
