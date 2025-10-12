@@ -1,0 +1,108 @@
+.pane {
+    -fx-background-color: #121213;
+    background-color: #121213;
+}
+
+.letter-input {
+    -fx-background-color: transparent;
+    background-color: transparent;
+    -fx-border-color: #3a3a3c;
+    border-color: #3a3a3c;
+    -fx-border-width: 2;
+    border-width: 2px;
+    -fx-text-fill: white;
+    color: white;
+    -fx-font-size: 29px;
+    font-size: 29px;
+    -fx-font-weight: bold;
+    font-weight: bold;
+    -fx-alignment: center;
+    text-align: center;
+    -fx-min-width: 65px;
+    -fx-max-width: 65px;
+    -fx-min-height: 65px;
+    -fx-max-height: 65px;
+    -fx-background-radius: 50%;
+    -fx-border-radius: 50%;
+    border-radius: 50%;
+}
+
+.letter-input:focused {
+    -fx-border-color: #565758;
+    border-color: #565758;
+}
+
+.letter-correct {
+    -fx-background-color: transparent;
+    background-color: transparent;
+    -fx-border-color: transparent;
+    border-color: transparent;
+    -fx-text-fill: #6aaa64;
+    color: #6aaa64;
+}
+
+.letter-present {
+    -fx-background-color: transparent;
+    background-color: transparent;
+    -fx-border-color: transparent;
+    border-color: transparent;
+    -fx-text-fill: #c9b458;
+    color: #c9b458;
+}
+
+.letter-absent {
+    -fx-background-color: transparent;
+    background-color: transparent;
+    -fx-border-color: transparent;
+    border-color: transparent;
+    -fx-text-fill: #86888a;
+    color: #86888a;
+}
+
+.keyboard-button {
+    -fx-background-color: #818384;
+    background-color: #818384;
+    -fx-text-fill: white;
+    color: white;
+    -fx-font-weight: bold;
+    font-weight: bold;
+    -fx-min-width: 43px;
+    min-width: 43px;
+    -fx-min-height: 58px;
+    min-height: 58px;
+    -fx-background-radius: 4;
+    border-radius: 4px;
+    -fx-font-size: 16px;
+    font-size: 16px;
+}
+
+.keyboard-button:hover {
+    -fx-opacity: 0.9;
+    opacity: 0.9;
+}
+
+.keyboard-button.correct {
+    -fx-background-color: #6aaa64;
+    background-color: #6aaa64;
+}
+
+.keyboard-button.present {
+    -fx-background-color: #c9b458;
+    background-color: #c9b458;
+}
+
+.keyboard-button.absent {
+    -fx-background-color: #3a3a3c;
+    background-color: #3a3a3c;
+}
+
+.title {
+    -fx-font-size: 36px;
+    font-size: 36px;
+    -fx-font-weight: bold;
+    font-weight: bold;
+    -fx-text-fill: white;
+    color: white;
+    -fx-font-family: "System";
+    font-family: "System";
+}
