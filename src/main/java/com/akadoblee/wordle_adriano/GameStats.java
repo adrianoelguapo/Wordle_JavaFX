@@ -2,6 +2,7 @@ package com.akadoblee.wordle_adriano;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.sql.SQLException;
 
 public class GameStats {
     private static GameStats instance;
@@ -13,7 +14,6 @@ public class GameStats {
 
     private GameStats() {
         usedLetters = new HashSet<>();
-        StatsStorage.loadStats(this);
     }
 
     public static GameStats getInstance() {
@@ -27,6 +27,14 @@ public class GameStats {
         this.targetWord = newTargetWord;
         this.attempts = 0;
         this.usedLetters.clear();
+        try {
+            this.gamesWon = GameStatsRepository.getWins();
+            this.gamesLost = GameStatsRepository.getLosses();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            this.gamesWon = 0;
+            this.gamesLost = 0;
+        }
     }
 
     public void incrementAttempts() {
@@ -38,13 +46,21 @@ public class GameStats {
     }
 
     public void incrementGamesWon() {
-        this.gamesWon++;
-        StatsStorage.saveStats(this);
+        try {
+            GameStatsRepository.incrementWins();
+            this.gamesWon++;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     public void incrementGamesLost() {
-        this.gamesLost++;
-        StatsStorage.saveStats(this);
+        try {
+            GameStatsRepository.incrementLosses();
+            this.gamesLost++;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     public String getTargetWord() {

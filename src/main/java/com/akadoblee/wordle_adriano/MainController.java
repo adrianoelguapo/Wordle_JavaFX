@@ -10,11 +10,8 @@ import javafx.scene.layout.Pane;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
-import javafx.beans.value.ChangeListener;
 import java.io.IOException;
-import java.util.Random;
-import java.util.List;
-import java.util.Arrays;
+import java.sql.SQLException;
 
 public class MainController {
     @FXML private Pane root;
@@ -22,55 +19,42 @@ public class MainController {
     private int currentRow = 0;
     private int currentCol = 0;
     private String targetWord;
-    private final List<String> WORDS = Arrays.asList(
-        // Sustantivos comunes
-        "PAPEL", "LIBRO", "PLUMA", "RELOJ", "MUNDO",
-        "TABLA", "SILLA", "COCHE", "PLAYA", "PLATO",
-        "PIANO", "CLARA", "PERRO", "GATOS", "MESAS",
-        // Adjetivos
-        "VERDE", "AZULA", "ROJAS", "NEGRO", "SUAVE",
-        "DUROS", "FELIZ", "FUERA", "LARGO", "CORTO",
-        // Verbos
-        "COMER", "BEBER", "SALIR", "JUGAR", "MIRAR",
-        "NADAR", "SALTO", "BESAR", "VIVIR", "SOÑAR",
-        // Naturaleza
-        "FUEGO", "AGUAS", "HOJAS", "FLORA", "ARBOL",
-        "PLAYA", "MONTE", "NIEVE", "CAMPO", "ARENA",
-        // Otros
-        "FECHA", "HORAS", "NOCHE", "TARDE", "ABRIL",
-        "MARZO", "LUNES", "PARED", "TECHO", "SUELO"
-    );
 
     @FXML
     public void initialize() {
-        // Asegurarnos de que los estilos se apliquen
-        if (!root.getStyleClass().contains("pane")) {
-            root.getStyleClass().add("pane");
-        }
+        try {
+            // Asegurarnos de que los estilos se apliquen
+            if (!root.getStyleClass().contains("pane")) {
+                root.getStyleClass().add("pane");
+            }
 
-        // Inicializar la matriz grid con las referencias a los TextField
-        for (int i = 0; i < 6; i++) {
-            for (int j = 0; j < 5; j++) {
-                final String id = "row" + i + "col" + j;
-                grid[i][j] = (TextField) root.lookup("#" + id);
-                if (grid[i][j] != null) {
-                    grid[i][j].setEditable(false);
-                    // Asegurarse de que el borde sea visible desde el inicio
-                    grid[i][j].setStyle("-fx-border-color: #3a3a3c; -fx-border-width: 2;");
+            // Inicializar la matriz grid con las referencias a los TextField
+            for (int i = 0; i < 6; i++) {
+                for (int j = 0; j < 5; j++) {
+                    final String id = "row" + i + "col" + j;
+                    grid[i][j] = (TextField) root.lookup("#" + id);
+                    if (grid[i][j] != null) {
+                        grid[i][j].setEditable(false);
+                        // Asegurarse de que el borde sea visible desde el inicio
+                        grid[i][j].setStyle("-fx-border-color: #3a3a3c; -fx-border-width: 2;");
+                    }
                 }
             }
+
+            // Agregar el event listener para el teclado directamente a la raíz del panel
+            root.setOnKeyPressed(this::handleKeyPress);
+            root.requestFocus(); // Esto asegura que el panel tenga el foco desde el inicio
+            
+            // Seleccionar una palabra aleatoria de la base de datos
+            targetWord = WordRepository.getRandomWord();
+            
+            // Inicializar las estadísticas
+            GameStats.getInstance().resetGameStats(targetWord);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            // En caso de error con la base de datos, cerrar la aplicación
+            System.exit(1);
         }
-
-        // Agregar el event listener para el teclado directamente a la raíz del panel
-        root.setOnKeyPressed(this::handleKeyPress);
-        root.requestFocus(); // Esto asegura que el panel tenga el foco desde el inicio
-
-        // Seleccionar una palabra aleatoria
-        Random random = new Random();
-        targetWord = WORDS.get(random.nextInt(WORDS.size()));
-        
-        // Inicializar las estadísticas
-        GameStats.getInstance().resetGameStats(targetWord);
     }
 
     @FXML

@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.akadoblee</groupId>
-    <artifactId>Wordle_Adriano</artifactId>
+    <name>Wordle_Adriano</name>
     <version>1.0-SNAPSHOT</version>
     <name>Wordle_Adriano</name>
 
@@ -14,7 +14,6 @@
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
         <javafx.version>21.0.1</javafx.version>
-        <junit.version>5.10.2</junit.version>
     </properties>
 
     <dependencies>
@@ -43,6 +42,10 @@
             <artifactId>mysql-connector-j</artifactId>
             <version>8.0.33</version>
         </dependency>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
@@ -64,8 +67,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.13.0</version>
                 <configuration>
-                    <source>${maven.compiler.source}</source>
-                    <target>${maven.compiler.target}</target>
+                    <source>25</source>
+                    <target>25</target>
                 </configuration>
             </plugin>
             <plugin>

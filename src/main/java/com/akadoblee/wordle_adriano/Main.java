@@ -17,6 +17,8 @@ public class Main extends Application {
     }
 
     public static void main(String[] args) {
+        // Inicializar la base de datos antes de lanzar la aplicación
+        InitialDataLoader.initializeDatabase();
         launch();
     }
 }
