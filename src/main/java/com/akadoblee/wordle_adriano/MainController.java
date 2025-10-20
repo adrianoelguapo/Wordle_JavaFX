@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 
 public class MainController {
+
     @FXML private Pane root;
     private TextField[][] grid = new TextField[6][5];
     private int currentRow = 0;
@@ -22,89 +23,121 @@ public class MainController {
 
     @FXML
     public void initialize() {
+
         try {
-            // Asegurarnos de que los estilos se apliquen
+
             if (!root.getStyleClass().contains("pane")) {
+
                 root.getStyleClass().add("pane");
+
             }
 
-            // Inicializar la matriz grid con las referencias a los TextField
             for (int i = 0; i < 6; i++) {
+
                 for (int j = 0; j < 5; j++) {
+
                     final String id = "row" + i + "col" + j;
                     grid[i][j] = (TextField) root.lookup("#" + id);
+
                     if (grid[i][j] != null) {
+
                         grid[i][j].setEditable(false);
-                        // Asegurarse de que el borde sea visible desde el inicio
                         grid[i][j].setStyle("-fx-border-color: #3a3a3c; -fx-border-width: 2;");
+
                     }
+
                 }
+
             }
 
-            // Agregar el event listener para el teclado directamente a la raíz del panel
             root.setOnKeyPressed(this::handleKeyPress);
-            root.requestFocus(); // Esto asegura que el panel tenga el foco desde el inicio
+            root.requestFocus();
             
-            // Seleccionar una palabra aleatoria de la base de datos
             targetWord = WordRepository.getRandomWord();
             
-            // Inicializar las estadísticas
             GameStats.getInstance().resetGameStats(targetWord);
+
         } catch (SQLException e) {
+
             e.printStackTrace();
-            // En caso de error con la base de datos, cerrar la aplicación
             System.exit(1);
+
         }
+
     }
 
     @FXML
     private void onKeyPressed(javafx.event.ActionEvent event) {
+
         if (currentRow < 6 && currentCol < 5) {
+
             Button button = (Button) event.getSource();
             String letter = button.getText();
+
             if (letter.matches("[A-ZÑÁÉÍÓÚ]")) {
+
                 grid[currentRow][currentCol].setText(letter);
                 currentCol++;
+
             }
+
         }
+
     }
 
     @FXML
     private void onDelete() {
+
         if (currentCol > 0) {
+
             currentCol--;
             grid[currentRow][currentCol].setText("");
+
         }
+
     }
 
     @FXML
     private void onEnter() {
+
         if (currentCol == 5) {
+
             StringBuilder guess = new StringBuilder();
+
             for (int i = 0; i < 5; i++) {
+
                 guess.append(grid[currentRow][i].getText());
+
             }
 
             String guessWord = guess.toString();
             checkWord(guessWord);
 
             if (guessWord.equals(targetWord)) {
-                // ¡Victoria!
+                
                 GameStats.getInstance().incrementGamesWon();
                 showStatsView();
+
             } else if (currentRow == 5) {
-                // Juego terminado - sin más intentos
+                
                 GameStats.getInstance().incrementGamesLost();
                 showStatsView();
+
             } else {
+
                 currentRow++;
                 currentCol = 0;
+
             }
+
         }
+
     }
 
     private void showStatsView() {
+
         try {
+
             disableInput();
             FXMLLoader loader = new FXMLLoader(getClass().getResource("StatsView.fxml"));
             Parent root = loader.load();
@@ -114,40 +147,53 @@ public class MainController {
             Stage stage = (Stage) this.root.getScene().getWindow();
             stage.setScene(scene);
             stage.show();
+
         } catch (IOException e) {
+
             e.printStackTrace();
+
         }
+
     }
 
     private void checkWord(String guess) {
+
         GameStats gameStats = GameStats.getInstance();
         gameStats.incrementAttempts();
 
         for (int i = 0; i < 5; i++) {
+
             TextField field = grid[currentRow][i];
             char guessChar = guess.charAt(i);
             char targetChar = targetWord.charAt(i);
 
-            // Registrar la letra usada
             gameStats.addUsedLetter(String.valueOf(guessChar));
 
-            // Mantener el estilo del borde
             field.setStyle("-fx-border-color: #3a3a3c; -fx-border-width: 2;");
 
             if (guessChar == targetChar) {
+
                 field.getStyleClass().add("letter-correct");
                 updateKeyboardButton(String.valueOf(guessChar), "correct");
+
             } else if (targetWord.indexOf(guessChar) != -1) {
+
                 field.getStyleClass().add("letter-present");
                 updateKeyboardButton(String.valueOf(guessChar), "present");
+
             } else {
+
                 field.getStyleClass().add("letter-absent");
                 updateKeyboardButton(String.valueOf(guessChar), "absent");
+
             }
+
         }
+
     }
 
     private void updateKeyboardButton(String letter, String status) {
+
         root.lookupAll(".keyboard-button").stream()
             .filter(node -> node instanceof Button)
             .map(node -> (Button) node)
@@ -156,26 +202,36 @@ public class MainController {
                 button.getStyleClass().removeAll("correct", "present", "absent");
                 button.getStyleClass().add(status);
             });
+
     }
 
     private void disableInput() {
+
         root.lookupAll(".keyboard-button").forEach(node -> node.setDisable(true));
         root.getScene().setOnKeyPressed(null);
+
     }
 
     private void handleKeyPress(KeyEvent event) {
+
         if (!event.isConsumed()) {
+
             if (event.getCode() == KeyCode.BACK_SPACE || event.getCode() == KeyCode.DELETE) {
+
                 onDelete();
                 event.consume();
+
             } else if (event.getCode() == KeyCode.ENTER) {
+
                 onEnter();
                 event.consume();
+
             } else {
+
                 String keyText = event.getText().toUpperCase();
-                // Solo procesar letras
+
                 if (keyText.matches("[A-ZÑ]")) {
-                    // Simular el clic en el botón correspondiente
+
                     root.lookupAll(".keyboard-button").stream()
                         .filter(node -> node instanceof Button)
                         .map(node -> (Button) node)
@@ -186,9 +242,14 @@ public class MainController {
                                 onKeyPressed(new javafx.event.ActionEvent(button, null));
                             }
                         });
+
                     event.consume();
                 }
+
             }
+
         }
+
     }
+    
 }
